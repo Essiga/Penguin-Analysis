@@ -1,0 +1,28 @@
+{
+    "id": "41FEE649",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1653741157115.0,
+    "source_on_save": false,
+    "relative_order": 8,
+    "properties": {
+        "id": "7ca0b52a03544dc8b28e06bdd9e6cbb0",
+        "name": "length(grep(\"male\", data1[8]))",
+        "title": "length(grep(\"male\", data1[8]))",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 2880768772232,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1653741157115,
+    "read_only": false,
+    "read_only_alternatives": []
+}
