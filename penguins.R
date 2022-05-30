@@ -133,7 +133,7 @@ getBodyMassBySexAndSpecies <- function(){
 getBodyMassCurve = function() {
   body_mass_sd <- sd(penguins$body_mass_g, na.rm=TRUE)
   body_mass_mean <- mean(penguins$body_mass_g, na.rm=TRUE)
-  y <- dnorm(penguins$body_mass_g, mean=b, sd=a)
+  y <- dnorm(penguins$body_mass_g, mean=body_mass_mean, sd=body_mass_sd)
   #plot(penguins$body_mass_g, y, col="red")
   
   
