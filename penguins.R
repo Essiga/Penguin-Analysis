@@ -1,10 +1,19 @@
 library(dplyr)
 library(ggplot2)
 library(scales)
+library(ggpubr)
 #Get data from csv
 penguins <- read.csv("penguins.csv", header=TRUE, stringsAsFactors=FALSE)
-
 #View(penguins)
+
+getIslandCount <- function(){
+  ggplot(penguins, aes(fill=island)) + 
+    geom_histogram (aes(x=island), stat="count") +
+    labs(
+      title="Penguin Count by Island",
+      caption=paste("Total Penguin count:", count(penguins))
+    )
+}
 
 getSexPieChart <- function(){
   sex_count <- count(penguins, sex)
@@ -15,49 +24,13 @@ getSexPieChart <- function(){
          fill = colors)
 }
 
-getBillDimensionsScatterPlot <- function(){
-  
-
-  ggplot(penguins, aes(x=bill_length_mm, y=bill_depth_mm, color=species, shape=species)) +
-    geom_point(size=2) +
-    geom_smooth(method=lm, se=FALSE) +
-    labs(x="Bill length [mm]", y="Bill depth [mm]", title="Bill Dimensions Scatter Plot") 
-  #print(bill_dimensions)
-  #penguin_bill_length$bill_length_mm[is.na(sex_count$sex)] <- "unidentified"
-}
-
-getBillDimensionsScatterPlotBySex <- function(){
-
-  penguins_clean <- na.omit(penguins)
-  ggplot(penguins_clean, aes(x=bill_length_mm, y=bill_depth_mm, color=interaction(sex, species), shape=interaction(sex, species))) +
-    geom_point(size=2) +
-    geom_smooth(method=lm, se=FALSE) +
-    labs(x="Bill length [mm]", y="Bill depth [mm]", title="Detailed Bill Dimensions Scatter Plot")
-
-}
-
-getBillDimensionsScatterPlotBySexWithUnidentified <- function(){
-  penguins$sex[is.na(penguins$sex)] <- "unidentified"
-  ggplot(penguins, aes(x=bill_length_mm, y=bill_depth_mm, color=interaction(sex, species), shape=interaction(sex, species))) +
-    geom_point(size=2) +
-    geom_smooth(method=lm, se=FALSE) +
-    labs(x="Bill length [mm]", shape="Sex.Species", colour="Sex.Species", y="Bill depth [mm]", title="Assuming Gender", subtitle="Trying to guess gender by distribution") +
-    scale_shape_manual(values = 0:8)
-  
-  #print(bill_dimensions)
-  #penguin_bill_length$bill_length_mm[is.na(sex_count$sex)] <- "unidentified"
-}
-
 getSpeciesCount <- function(){
   ggplot(penguins, aes(fill=species)) + 
     geom_histogram (aes(x=species), stat="count") +
-    labs(title="Species Count", caption=paste("Total Penguin count:", count(penguins)))
-}
-
-getIslandCount <- function(){
-  ggplot(penguins, aes(fill=island)) + 
-    geom_histogram (aes(x=island), stat="count") +
-    labs(title="Penguin Count by Island", caption=paste("Total Penguin count:", count(penguins)))
+    labs(
+      title="Species Count",
+      caption=paste("Total Penguin count:", count(penguins))
+    )
 }
 
 getSpeciesCountBiscoe <- function(){
@@ -68,7 +41,13 @@ getSpeciesCountBiscoe <- function(){
     coord_polar(theta = "y") +
     geom_text(aes(label = paste0(n," (" , percent(n/sum(n)),")" ),),
               position = position_stack(vjust = 0.5)) +
-    labs(title="Count by species: Biscoe", fill="Species", y="", x="", caption=paste("Total Penguin count:", sum(species_count$n)))
+    labs(
+      title="Count by species: Biscoe",
+      fill="Species",
+      y="",
+      x="",
+      caption=paste("Total Penguin count:", sum(species_count$n))
+    )
 }
 
 getSpeciesCountDream <- function(){
@@ -79,7 +58,11 @@ getSpeciesCountDream <- function(){
     coord_polar(theta = "y") +
     geom_text(aes(label = paste0(n," (" , percent(n/sum(n)),")" ),),
               position = position_stack(vjust = 0.5)) +
-    labs(title="Count by species: Dream", fill="Species", y="", x="", caption=paste("Total Penguin count:", sum(species_count$n)))
+    labs(
+      title="Count by species: Dream",
+      fill="Species", y="", x="",
+      caption=paste("Total Penguin count:", sum(species_count$n))
+    )
 }
 
 getSpeciesCountTorgersen <- function(){
@@ -90,72 +73,130 @@ getSpeciesCountTorgersen <- function(){
     coord_polar(theta = "y") +
     geom_text(aes(label = paste0(n," (" , percent(n/sum(n)),")" ),),
               position = position_stack(vjust = 0.5)) +
-    labs(title="Count by species: Torgersen", fill="Species", y="", x="", caption=paste("Total Penguin count:", sum(species_count$n)))
+    labs(
+      title="Count by species: Torgersen",
+      fill="Species", y="", x="",
+      caption=paste("Total Penguin count:", sum(species_count$n))
+    )
+}
+
+getBillDimensionsScatterPlot <- function(){
+  ggplot(penguins, aes(x=bill_length_mm, y=bill_depth_mm, color=species, shape=species)) +
+    geom_point(size=2) +
+    geom_smooth(method=lm, se=FALSE) +
+    stat_cor(method = "pearson", label.x= 28, p.accuracy = 0.001) +
+    labs(
+      x="Bill length [mm]",
+      y="Bill depth [mm]",
+      title="Bill Dimensions Scatter Plot"
+    )
+    
+}
+
+getBillDimensionsScatterPlotBySex <- function(){
+  penguins_clean <- na.omit(penguins)
+  ggplot(penguins_clean, aes(x=bill_length_mm, y=bill_depth_mm, color=interaction(sex, species), shape=interaction(sex, species))) +
+    geom_point(size=2) +
+    geom_smooth(method=lm, se=FALSE) +
+    stat_cor(method = "pearson", label.x= 25, p.accuracy = 0.001) +
+    labs(
+      x="Bill length [mm]",
+      y="Bill depth [mm]",
+      title="Detailed Bill Dimensions Scatter Plot"
+    )
+}
+
+getBillDimensionsScatterPlotBySexWithUnidentified <- function(){
+  penguins$sex[is.na(penguins$sex)] <- "unidentified"
+  ggplot(penguins, aes(x=bill_length_mm, y=bill_depth_mm, color=interaction(sex, species), shape=interaction(sex, species))) +
+    geom_point(size=2) +
+    geom_smooth(method=lm, se=FALSE) +
+    scale_shape_manual(values = 0:8) +
+    stat_cor(method = "pearson", label.x= 25, p.accuracy = 0.001) +
+    labs(
+      x="Bill length [mm]",
+      shape="Sex.Species",
+      colour="Sex.Species",
+      y="Bill depth [mm]",
+      title="Assuming Gender",
+      subtitle="Trying to guess gender by distribution"
+    )
 }
 
 getBillAndFlippersScatterPlot <- function(){
-  
-  
   ggplot(penguins, aes(x=bill_length_mm, y=flipper_length_mm, color=species, shape=species)) +
     geom_point(size=2) +
     geom_smooth(method=lm, se=FALSE) +
-    labs(x="Bill length [mm]", y="Flipper length [mm]", title="Bill & Flipper Length Scatter Plot") 
-  #print(bill_dimensions)
-  #penguin_bill_length$bill_length_mm[is.na(sex_count$sex)] <- "unidentified"
+    stat_cor(method = "pearson", p.accuracy = 0.001) +
+    labs(
+      x="Bill length [mm]",
+      y="Flipper length [mm]",
+      title="Bill & Flipper Length Scatter Plot"
+    )
 }
 
 getFlippersAndBodyMassScatterPlot <- function(){
-  
   ggplot(penguins, aes(x=flipper_length_mm, y=body_mass_g, color=species, shape=species)) +
     geom_point(size=2) +
     geom_smooth(method=lm, se=FALSE) +
-    labs(x="Flipper length [mm]", y="Body Mass [g]", title="Bill & Flipper Length Scatter Plot") 
-  #print(bill_dimensions)
-  #penguin_bill_length$bill_length_mm[is.na(sex_count$sex)] <- "unidentified"
+    stat_cor(method = "pearson", p.accuracy = 0.001) +
+    labs(
+      x="Flipper length [mm]",
+      y="Body Mass [g]",
+      title="Body Mass & Flipper Length Scatter Plot"
+    )
 }
 
 getBodyMassBySexAndSpecies <- function(){
-    penguins_clean <- na.omit(penguins)
-    ggplot(data = penguins_clean, aes(x = interaction(species, sex), y = body_mass_g)) +
+  penguins_clean <- na.omit(penguins)
+  ggplot(data = penguins_clean, aes(x = interaction(species, sex), y = body_mass_g)) +
     geom_boxplot(aes(color = species), width = 0.3, show.legend = FALSE) +
     geom_jitter(aes(color = species), alpha = 0.5, show.legend = FALSE, position = position_jitter(width = 0.2, seed = 0)) +
     scale_color_manual(values = c("darkorange","purple","cyan4")) +
-    labs(x = "Species.Sex",
-         y = "Body Mass (g)",
-         title="Body Mass by Sex and Species")
- # penguins_clean <- na.omit(penguins)
-#  ggplot(penguins_clean, aes(x=sex, y=body_mass_g, color=interaction(sex, species), shape=interaction(sex, species))) +
- #   geom_point(size=2) +
-  #  labs(x="Bill length [mm]", y="Bill depth [mm]", title="Detailed Bill Dimensions Scatter Plot")
-  
+    labs(
+      x = "Species.Sex",
+      y = "Body Mass (g)",
+      title="Body Mass by Sex and Species"
+    )
 }
 
 getBodyMassCurve = function() {
   body_mass_sd <- sd(penguins$body_mass_g, na.rm=TRUE)
   body_mass_mean <- mean(penguins$body_mass_g, na.rm=TRUE)
-  y <- dnorm(penguins$body_mass_g, mean=body_mass_mean, sd=body_mass_sd)
-  #plot(penguins$body_mass_g, y, col="red")
-  
+  y <- dnorm(penguins$body_mass_g, mean=b, sd=a)
   
   ggplot(penguins, aes(body_mass_g)) +
     stat_function(fun = dnorm, n = count(penguins), args = list(mean = body_mass_mean, sd = body_mass_sd)) + ylab("") +
     scale_y_continuous(breaks = NULL) +
-    labs(title="Body Mass Curve", subtitle = paste0("Standard Deviation: ", body_mass_sd, "\n", "Mean: ", body_mass_mean))
+    labs(
+      title="Body Mass Curve",
+      subtitle = paste0("Standard Deviation: ", body_mass_sd, "\n", "Mean: ", body_mass_mean)
+    )
 }
 
-#getSpeciesCount()
+getAvgIslandWeight <- function(){
+  penguins_adelie <- penguins[(penguins$species=="Adelie"),]
+  penguins_clean <- na.omit(penguins_adelie)
+  
+  ggplot(data = penguins_clean, aes(x = island, y = body_mass_g)) +
+    geom_boxplot(aes(color = island), width = 0.3, show.legend = FALSE) +
+    geom_jitter(aes(color = island), alpha = 0.4, show.legend = FALSE, position = position_jitter(width = 0.2, seed = 0)) +
+    scale_color_manual(values = c("darkorange","purple","cyan4")) +
+    labs(
+      title="Average Adelie Bodymass per Island",
+      y="Body mass [g]",
+      x="Island"
+    )
+}
+
+###############################################################################
+
+#getIslandCount()
 
 #getSexPieChart()
 
-#getBillDimensionsScatterPlot()
-
-#getBillDimensionsScatterPlotBySex()
-
-#getBillDimensionsScatterPlotBySexWithUnidentified()
- 
-#getIslandCount()
-
 #getSpeciesCount()
+
 
 #getSpeciesCountBiscoe()
 
@@ -163,10 +204,20 @@ getBodyMassCurve = function() {
 
 #getSpeciesCountTorgersen()
 
+
+#getBillDimensionsScatterPlot()
+
+#getBillDimensionsScatterPlotBySex()
+
+#getBillDimensionsScatterPlotBySexWithUnidentified()
+
+ 
 #getBillAndFlippersScatterPlot()
 
 #getFlippersAndBodyMassScatterPlot()
 
 #getBodyMassBySexAndSpecies()
 
-getBodyMassCurve()
+#getBodyMassCurve()
+
+getAvgIslandWeight()
